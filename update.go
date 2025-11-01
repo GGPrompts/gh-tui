@@ -18,6 +18,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Window resize
 	case tea.WindowSizeMsg:
 		m.setSize(msg.Width, msg.Height)
+		// Update landing page size if it exists
+		if m.landingPage != nil {
+			m.landingPage.Resize(msg.Width, msg.Height)
+		}
 		return m, nil
 
 	// Keyboard input
@@ -36,6 +40,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case statusMsg:
 		m.statusMsg = msg.message
+		return m, nil
+
+	// Landing page animation tick
+	case landingTickMsg:
+		if m.showLandingPage && m.landingPage != nil {
+			m.landingPage.Update()
+			return m, landingTick()
+		}
 		return m, nil
 
 	// GitHub data loaded messages - forward to views

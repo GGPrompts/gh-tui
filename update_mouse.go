@@ -72,6 +72,12 @@ func (m model) handleRightClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 
 // handleWheelUp handles mouse wheel scroll up
 func (m model) handleWheelUp(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
+	// Landing page navigation
+	if m.showLandingPage && m.landingPage != nil {
+		m.landingPage.SelectPrev()
+		return m, nil
+	}
+
 	// Forward wheel event to the active view
 	if view, ok := m.views[m.activeView]; ok {
 		updatedView, cmd := view.Update(msg)
@@ -83,6 +89,12 @@ func (m model) handleWheelUp(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 
 // handleWheelDown handles mouse wheel scroll down
 func (m model) handleWheelDown(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
+	// Landing page navigation
+	if m.showLandingPage && m.landingPage != nil {
+		m.landingPage.SelectNext()
+		return m, nil
+	}
+
 	// Forward wheel event to the active view
 	if view, ok := m.views[m.activeView]; ok {
 		updatedView, cmd := view.Update(msg)

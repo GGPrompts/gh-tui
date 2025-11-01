@@ -11,6 +11,11 @@ import (
 
 // handleKeyPress handles keyboard input
 func (m model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// Landing page has its own controls
+	if m.showLandingPage {
+		return m.handleLandingPageKeys(msg)
+	}
+
 	// Global keybindings (work in all modes)
 	switch {
 	case key.Matches(msg, keys.Quit):
@@ -34,6 +39,48 @@ func (m model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	//
 	// case "menu":
 	//     return m.handleMenuKeys(msg)
+	}
+
+	return m, nil
+}
+
+// handleLandingPageKeys handles keyboard input on the landing page
+func (m model) handleLandingPageKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// Check for Enter key using Type instead of String()
+	if msg.Type == tea.KeyEnter || msg.String() == " " {
+		// Exit landing page and jump to selected view
+		if m.landingPage != nil {
+			selectedIdx := m.landingPage.GetSelectedItem()
+			m.showLandingPage = false
+			m.switchToView(ViewType(selectedIdx))
+
+			// Start loading GitHub data now that we're entering the app
+			return m, tea.Batch(
+				fetchPullRequests(""),
+				fetchIssues(""),
+				fetchRepositories(""),
+				fetchWorkflowRuns(""),
+				fetchGists(),
+			)
+		}
+		return m, nil
+	}
+
+	switch msg.String() {
+	case "q", "ctrl+c", "esc":
+		return m, tea.Quit
+
+	case "up", "k":
+		if m.landingPage != nil {
+			m.landingPage.SelectPrev()
+		}
+		return m, nil
+
+	case "down", "j":
+		if m.landingPage != nil {
+			m.landingPage.SelectNext()
+		}
+		return m, nil
 	}
 
 	return m, nil

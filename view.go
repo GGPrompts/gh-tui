@@ -17,6 +17,11 @@ func (m model) View() string {
 		return m.renderMinimalView()
 	}
 
+	// Show landing page if enabled
+	if m.showLandingPage && m.landingPage != nil {
+		return m.landingPage.Render()
+	}
+
 	// Handle errors
 	if m.err != nil {
 		return m.renderErrorView()

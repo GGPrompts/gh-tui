@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -20,6 +22,7 @@ func initialModel(cfg Config) model {
 		views:            make(map[ViewType]View),
 		loading:          false,
 		showHelp:         false,
+		showLandingPage:  true, // Start with landing page
 	}
 
 	// Initialize all views
@@ -33,6 +36,9 @@ func initialModel(cfg Config) model {
 	if view, ok := m.views[ViewPullRequests]; ok {
 		view.Focus()
 	}
+
+	// Initialize landing page (will be sized on first WindowSizeMsg)
+	m.landingPage = NewLandingPage(80, 24)
 
 	return m
 }
@@ -93,11 +99,28 @@ func (m model) isValidSize() bool {
 
 // Init initializes the model and fetches initial data
 func (m model) Init() tea.Cmd {
-	return tea.Batch(
-		fetchPullRequests(""),
-		fetchIssues(""),
-		fetchRepositories(""),
-		fetchWorkflowRuns(""),
-		fetchGists(),
-	)
+	var cmds []tea.Cmd
+
+	// If showing landing page, only start animation - defer data loading
+	if m.showLandingPage {
+		cmds = append(cmds, landingTick())
+	} else {
+		// Load data immediately if not showing landing page
+		cmds = append(cmds,
+			fetchPullRequests(""),
+			fetchIssues(""),
+			fetchRepositories(""),
+			fetchWorkflowRuns(""),
+			fetchGists(),
+		)
+	}
+
+	return tea.Batch(cmds...)
+}
+
+// landingTick creates a tick command for landing page animation
+func landingTick() tea.Cmd {
+	return tea.Tick(time.Second/20, func(t time.Time) tea.Msg {
+		return landingTickMsg(t)
+	})
 }

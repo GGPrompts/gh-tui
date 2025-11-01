@@ -41,6 +41,10 @@ type model struct {
 	loading  bool
 	lastSync time.Time
 	showHelp bool
+
+	// Landing page
+	landingPage     *LandingPage
+	showLandingPage bool
 }
 
 // Config holds application configuration
@@ -132,6 +136,7 @@ const (
 	ViewRepositories
 	ViewActions
 	ViewGists
+	ViewPlugins // Added for future use
 )
 
 // View interface for all view implementations
@@ -264,3 +269,6 @@ type gistEditorFinishedMsg struct {
 	isNewGist    bool
 	err          error
 }
+
+// Landing page animation tick
+type landingTickMsg time.Time
