@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -10,13 +11,15 @@ import (
 
 // GistView displays a list of gists
 type GistView struct {
-	data     []Gist
-	cursor   int
-	focused  bool
-	err      error
-	loading  bool
-	width    int
-	height   int
+	data              []Gist
+	cursor            int
+	focused           bool
+	err               error
+	loading           bool
+	width             int
+	height            int
+	awaitingGistInput bool   // waiting for description/visibility input for new gist
+	newGistFilePath   string // temp file path for new gist being created
 }
 
 // NewGistView creates a new gist view
@@ -43,6 +46,32 @@ func (v *GistView) Update(msg tea.Msg) (View, tea.Cmd) {
 			}
 		}
 
+	case gistEditorFinishedMsg:
+		// Handle editor exit
+		if msg.err != nil {
+			v.err = fmt.Errorf("editor error: %w", msg.err)
+			return v, nil
+		}
+
+		if msg.isNewGist {
+			// Handle new gist creation
+			if msg.wasModified {
+				// User wrote content, now create the gist
+				// For simplicity, create as private by default
+				// TODO: Add dialog to ask for description and public/private
+				return v, createGistFromFile(msg.tempFilePath, "", false)
+			} else {
+				// User didn't write anything, just clean up
+				os.Remove(msg.tempFilePath)
+			}
+		} else if msg.wasModified {
+			// Handle gist edit - upload changes
+			return v, uploadGistChanges(msg.gistID, msg.tempFilePath)
+		} else {
+			// No changes made, just clean up temp file
+			os.Remove(msg.tempFilePath)
+		}
+
 	case tea.KeyMsg:
 		if !v.focused {
 			return v, nil
@@ -61,6 +90,59 @@ func (v *GistView) Update(msg tea.Msg) (View, tea.Cmd) {
 			v.loading = true
 			v.err = nil
 			return v, fetchGists()
+		case "o":
+			// Open/view gist in read-only mode
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				gist := v.data[v.cursor]
+				if !checkMicroAvailable() {
+					v.err = fmt.Errorf("micro editor not found - please install micro")
+					return v, nil
+				}
+				if len(gist.Files) == 0 {
+					v.err = fmt.Errorf("gist has no files")
+					return v, nil
+				}
+				// Open first file in read-only mode
+				return v, openGistInMicro(gist.ID, gist.Files[0].Filename, true)
+			}
+		case "e":
+			// Edit gist
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				gist := v.data[v.cursor]
+				if !checkMicroAvailable() {
+					v.err = fmt.Errorf("micro editor not found - please install micro")
+					return v, nil
+				}
+				if len(gist.Files) == 0 {
+					v.err = fmt.Errorf("gist has no files")
+					return v, nil
+				}
+				// Open first file for editing
+				return v, openGistInMicro(gist.ID, gist.Files[0].Filename, false)
+			}
+		case "n":
+			// Create new gist
+			if !checkMicroAvailable() {
+				v.err = fmt.Errorf("micro editor not found - please install micro")
+				return v, nil
+			}
+			return v, createNewGistInMicro()
+		}
+
+	case tea.MouseMsg:
+		if !v.focused {
+			return v, nil
+		}
+
+		switch msg.Type {
+		case tea.MouseWheelUp:
+			if v.cursor > 0 {
+				v.cursor--
+			}
+		case tea.MouseWheelDown:
+			if v.cursor < len(v.data)-1 {
+				v.cursor++
+			}
 		}
 	}
 
@@ -225,11 +307,15 @@ func (v *GistView) renderDetail(width, height int) string {
 	}
 
 	lines = append(lines, "")
-	lines = append(lines, dimmedStyle.Render(fmt.Sprintf("URL: %s", gist.URL)))
+	// Create clickable hyperlink with truncated display text
+	displayURL := truncateString(gist.URL, width-10)
+	clickableURL := makeHyperlink(gist.URL, displayURL)
+	lines = append(lines, dimmedStyle.Render(fmt.Sprintf("URL: %s", clickableURL)))
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • r: Refresh • q: Quit"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • o: View • e: Edit • n: New"))
+	lines = append(lines, helpStyle.Render("r: Refresh • q: Quit"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().

@@ -251,3 +251,16 @@ type gistsLoadedMsg struct {
 	gists []Gist
 	err   error
 }
+
+// Editor-related messages
+type editorFinishedMsg struct {
+	err error
+}
+
+type gistEditorFinishedMsg struct {
+	gistID       string
+	tempFilePath string
+	wasModified  bool
+	isNewGist    bool
+	err          error
+}

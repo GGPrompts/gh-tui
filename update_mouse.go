@@ -39,16 +39,6 @@ func (m model) handleMouseEvent(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 func (m model) handleLeftClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 	x, y := msg.X, msg.Y
 
-	// Check if click is in a specific region
-	// Example: check if clicked on an item in a list
-	// if m.isInItemList(x, y) {
-	//     itemIndex := m.getItemIndexAt(y)
-	//     if itemIndex >= 0 && itemIndex < len(m.items) {
-	//         m.cursor = itemIndex
-	//         return m.selectItem()
-	//     }
-	// }
-
 	// Check if clicked on UI elements
 	if m.isInTitleBar(x, y) {
 		return m.handleTitleBarClick(x, y)
@@ -58,7 +48,12 @@ func (m model) handleLeftClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 		return m.handleStatusBarClick(x, y)
 	}
 
-	// Add your application-specific click handlers here
+	// Forward mouse event to the active view
+	if view, ok := m.views[m.activeView]; ok {
+		updatedView, cmd := view.Update(msg)
+		m.views[m.activeView] = updatedView
+		return m, cmd
+	}
 
 	return m, nil
 }
@@ -77,14 +72,24 @@ func (m model) handleRightClick(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
 
 // handleWheelUp handles mouse wheel scroll up
 func (m model) handleWheelUp(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
-	// Scroll up in the focused component
-	return m.moveUp()
+	// Forward wheel event to the active view
+	if view, ok := m.views[m.activeView]; ok {
+		updatedView, cmd := view.Update(msg)
+		m.views[m.activeView] = updatedView
+		return m, cmd
+	}
+	return m, nil
 }
 
 // handleWheelDown handles mouse wheel scroll down
 func (m model) handleWheelDown(msg tea.MouseMsg) (tea.Model, tea.Cmd) {
-	// Scroll down in the focused component
-	return m.moveDown()
+	// Forward wheel event to the active view
+	if view, ok := m.views[m.activeView]; ok {
+		updatedView, cmd := view.Update(msg)
+		m.views[m.activeView] = updatedView
+		return m, cmd
+	}
+	return m, nil
 }
 
 // handleMouseMotion handles mouse movement (for hover effects)

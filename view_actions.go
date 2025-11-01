@@ -62,6 +62,22 @@ func (v *ActionsView) Update(msg tea.Msg) (View, tea.Cmd) {
 			v.err = nil
 			return v, fetchWorkflowRuns("")
 		}
+
+	case tea.MouseMsg:
+		if !v.focused {
+			return v, nil
+		}
+
+		switch msg.Type {
+		case tea.MouseWheelUp:
+			if v.cursor > 0 {
+				v.cursor--
+			}
+		case tea.MouseWheelDown:
+			if v.cursor < len(v.data)-1 {
+				v.cursor++
+			}
+		}
 	}
 
 	return v, nil
@@ -192,7 +208,10 @@ func (v *ActionsView) renderDetail(width, height int) string {
 	lines = append(lines, fmt.Sprintf("Age:        %s", formatTimeAgo(run.CreatedAt)))
 
 	lines = append(lines, "")
-	lines = append(lines, dimmedStyle.Render(fmt.Sprintf("URL: %s", run.URL)))
+	// Truncate URL to prevent wrapping in narrow detail pane
+	displayURL := truncateString(run.URL, width-10)
+	clickableURL := makeHyperlink(run.URL, displayURL)
+	lines = append(lines, dimmedStyle.Render(fmt.Sprintf("URL: %s", clickableURL)))
 
 	// Keyboard hints
 	lines = append(lines, "")

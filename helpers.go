@@ -173,6 +173,13 @@ func min(a, b int) int {
 	return b
 }
 
+// makeHyperlink creates a clickable terminal hyperlink using OSC 8
+// The displayed text can be truncated while the actual URL remains full
+func makeHyperlink(url string, displayText string) string {
+	// OSC 8 format: \x1b]8;;URL\x1b\\DISPLAY_TEXT\x1b]8;;\x1b\\
+	return fmt.Sprintf("\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\", url, displayText)
+}
+
 // wrapText wraps text to fit within a given width
 func wrapText(text string, width int) []string {
 	if width <= 0 {

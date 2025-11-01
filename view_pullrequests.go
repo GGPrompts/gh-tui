@@ -62,6 +62,22 @@ func (v *PullRequestView) Update(msg tea.Msg) (View, tea.Cmd) {
 			v.err = nil
 			return v, fetchPullRequests("")
 		}
+
+	case tea.MouseMsg:
+		if !v.focused {
+			return v, nil
+		}
+
+		switch msg.Type {
+		case tea.MouseWheelUp:
+			if v.cursor > 0 {
+				v.cursor--
+			}
+		case tea.MouseWheelDown:
+			if v.cursor < len(v.data)-1 {
+				v.cursor++
+			}
+		}
 	}
 
 	return v, nil
@@ -198,7 +214,10 @@ func (v *PullRequestView) renderDetail(width, height int) string {
 	}
 
 	lines = append(lines, "")
-	lines = append(lines, dimmedStyle.Render(fmt.Sprintf("URL: %s", pr.URL)))
+	// Truncate URL to prevent wrapping in narrow detail pane
+	displayURL := truncateString(pr.URL, width-10)
+	clickableURL := makeHyperlink(pr.URL, displayURL)
+	lines = append(lines, dimmedStyle.Render(fmt.Sprintf("URL: %s", clickableURL)))
 
 	// Keyboard hints
 	lines = append(lines, "")
