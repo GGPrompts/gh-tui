@@ -16,6 +16,18 @@ func (m model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleLandingPageKeys(msg)
 	}
 
+	// Help screen has priority - Esc or ? closes it
+	if m.showHelp {
+		switch msg.String() {
+		case "esc", "?":
+			m.showHelp = false
+			m.statusMsg = "Help closed"
+			return m, nil
+		}
+		// Consume all other keys when help is open
+		return m, nil
+	}
+
 	// Global keybindings (work in all modes)
 	switch {
 	case key.Matches(msg, keys.Quit):
@@ -225,8 +237,13 @@ func (m model) switchFocus() (tea.Model, tea.Cmd) {
 }
 
 func (m model) toggleHelp() (tea.Model, tea.Cmd) {
-	// Toggle help dialog
-	m.statusMsg = "Help: q=quit, ?=help, ↑↓=navigate, enter=select"
+	// Toggle help screen
+	m.showHelp = !m.showHelp
+	if m.showHelp {
+		m.statusMsg = "Showing help - Press ? or Esc to close"
+	} else {
+		m.statusMsg = "Help closed"
+	}
 	return m, nil
 }
 

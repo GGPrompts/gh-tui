@@ -17,6 +17,11 @@ func (m model) View() string {
 		return m.renderMinimalView()
 	}
 
+	// Show help screen (takes priority over everything)
+	if m.showHelp {
+		return m.renderHelpScreen()
+	}
+
 	// Show landing page if enabled
 	if m.showLandingPage && m.landingPage != nil {
 		return m.landingPage.Render()
@@ -265,4 +270,97 @@ func centerString(s string, width int) string {
 	leftPad := (width - strWidth) / 2
 	rightPad := width - strWidth - leftPad
 	return strings.Repeat(" ", leftPad) + s + strings.Repeat(" ", rightPad)
+}
+
+// renderHelpScreen renders the help overlay
+func (m model) renderHelpScreen() string {
+	// Create help content
+	var sections []string
+
+	// Title
+	title := titleStyle.Render("gh-tui - Keyboard Shortcuts")
+	sections = append(sections, title)
+	sections = append(sections, "")
+
+	// Global Keys
+	sections = append(sections, helpSectionStyle.Render("Global Keys"))
+	sections = append(sections, helpKeyStyle.Render("  ?        ")+"  Toggle this help screen")
+	sections = append(sections, helpKeyStyle.Render("  q        ")+"  Quit application")
+	sections = append(sections, helpKeyStyle.Render("  r        ")+"  Refresh current view")
+	sections = append(sections, helpKeyStyle.Render("  Esc      ")+"  Close help / dialogs")
+	sections = append(sections, "")
+
+	// Navigation Keys
+	sections = append(sections, helpSectionStyle.Render("Navigation"))
+	sections = append(sections, helpKeyStyle.Render("  Tab      ")+"  Next tab")
+	sections = append(sections, helpKeyStyle.Render("  Shift+Tab")+"  Previous tab")
+	sections = append(sections, helpKeyStyle.Render("  1-5      ")+"  Jump to tab (1=PRs, 2=Issues, 3=Repos, 4=Actions, 5=Gists)")
+	sections = append(sections, helpKeyStyle.Render("  ↑/↓, j/k ")+"  Navigate list items")
+	sections = append(sections, "")
+
+	// Common Actions
+	sections = append(sections, helpSectionStyle.Render("Common Actions (All Tabs)"))
+	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open item in browser")
+	sections = append(sections, "")
+
+	// Pull Requests Tab
+	sections = append(sections, helpSectionStyle.Render("Pull Requests Tab"))
+	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open PR in browser")
+	sections = append(sections, helpKeyStyle.Render("  d        ")+"  View diff (coming soon)")
+	sections = append(sections, helpKeyStyle.Render("  m        ")+"  Merge PR (coming soon)")
+	sections = append(sections, "")
+
+	// Issues Tab
+	sections = append(sections, helpSectionStyle.Render("Issues Tab"))
+	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open issue in browser")
+	sections = append(sections, helpKeyStyle.Render("  n        ")+"  Create new issue (coming soon)")
+	sections = append(sections, helpKeyStyle.Render("  e        ")+"  Edit issue (coming soon)")
+	sections = append(sections, "")
+
+	// Repositories Tab
+	sections = append(sections, helpSectionStyle.Render("Repositories Tab"))
+	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open repo in browser")
+	sections = append(sections, helpKeyStyle.Render("  v        ")+"  Toggle list/table view")
+	sections = append(sections, helpKeyStyle.Render("  c        ")+"  Clone repository (coming soon)")
+	sections = append(sections, helpKeyStyle.Render("  s        ")+"  Star/unstar repo (coming soon)")
+	sections = append(sections, "")
+
+	// Actions Tab
+	sections = append(sections, helpSectionStyle.Render("Actions Tab"))
+	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open workflow run in browser")
+	sections = append(sections, helpKeyStyle.Render("  l        ")+"  View logs (coming soon)")
+	sections = append(sections, helpKeyStyle.Render("  r        ")+"  Re-run workflow (coming soon)")
+	sections = append(sections, "")
+
+	// Gists Tab
+	sections = append(sections, helpSectionStyle.Render("Gists Tab"))
+	sections = append(sections, helpKeyStyle.Render("  o        ")+"  View gist in micro (read-only)")
+	sections = append(sections, helpKeyStyle.Render("  e        ")+"  Edit gist with micro")
+	sections = append(sections, helpKeyStyle.Render("  n        ")+"  Create new gist")
+	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open gist in browser")
+	sections = append(sections, "")
+
+	// Footer
+	sections = append(sections, dimmedStyle.Render("Press ? or Esc to close this help screen"))
+
+	// Join all sections
+	content := strings.Join(sections, "\n")
+
+	// Create a box around the content
+	helpBox := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#58a6ff")).
+		Padding(1, 2).
+		Width(m.width - 4).
+		MaxWidth(100).
+		Render(content)
+
+	// Center the box on screen
+	return lipgloss.Place(
+		m.width,
+		m.height,
+		lipgloss.Center,
+		lipgloss.Center,
+		helpBox,
+	)
 }

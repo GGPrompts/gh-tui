@@ -179,7 +179,7 @@ Based on INTEGRATION_PLAN.md:
 ### Phase 6: UI/UX Polish (Ongoing)
 
 **Core UI**
-- [ ] Help screen (`?` key) with keybinding cheat sheet
+- [x] Help screen (`?` key) with keybinding cheat sheet ✅ Done
 - [ ] Loading spinners during data fetch
 - [ ] Better error messages (user-friendly)
 - [ ] Empty state messages ("No PRs found")
@@ -237,14 +237,14 @@ From ENHANCEMENTS.md (cherry-picked high-value items):
 ## 🎯 Recommended Next Steps
 
 ### Immediate (This Week)
-1. **Interactive Actions** - Start with "open in browser" (`b` key)
+1. ✅ **Interactive Actions** - Start with "open in browser" (`b` key) - DONE
    - Easiest to implement (just `gh pr/issue/repo view --web`)
    - Works across all tabs (PR, Issues, Repos, Actions)
    - Note: Gists already uses `o` for view in micro (read-only)
    - High user value
    - **Time**: 1-2 hours
 
-2. **Help Screen** - Add `?` key handler
+2. ✅ **Help Screen** - Add `?` key handler - DONE
    - Modal overlay with keybindings
    - Static content, easy to implement
    - Helps discoverability

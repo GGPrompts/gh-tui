@@ -11,9 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎉 Recent Updates
 
-**Interactive Actions - Phase 1 Started** - Adding user actions across all views
+**Interactive Actions - Phase 1 Progress** - Adding user actions across all views
+**Help System Complete** - Comprehensive keyboard shortcut reference
 
 ### ✨ Added
+
+#### Help Screen (`?` key)
+- **Interactive Help Overlay** - Press `?` to toggle comprehensive help screen
+  - Beautiful centered modal with GitHub theme
+  - Organized by sections: Global Keys, Navigation, Per-Tab Actions
+  - Shows all current keybindings and coming soon features
+  - Press `?` or `Esc` to close
+- **Complete Keyboard Reference**
+  - Global keys (quit, refresh, help)
+  - Navigation (tab switching, arrow keys, vim keys)
+  - Per-tab actions for all 5 tabs
+  - Clear visual hierarchy with colors
+- **Improved Discoverability** - New users can press `?` to learn all shortcuts
 
 #### Interactive Browser Integration (`b` key)
 - **Open in Browser** - Universal `b` key across all tabs
@@ -30,7 +44,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔧 Technical Details
 
-**Files Modified:**
+**Files Modified (Help Screen):**
+- `update_keyboard.go` - Fixed `toggleHelp()` to actually toggle `showHelp` boolean, added Esc handler
+- `view.go` - Added `renderHelpScreen()` function with comprehensive keybinding list
+- `styles.go` - Added `helpSectionStyle` and `helpKeyStyle` for GitHub-themed formatting
+
+**Files Modified (Browser Integration):**
 - `helpers.go` - Added `openInBrowser()` function
 - `view_pullrequests.go` - Added `b` key handler
 - `view_issues.go` - Added `b` key handler

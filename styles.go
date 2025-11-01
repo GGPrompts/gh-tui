@@ -263,3 +263,13 @@ var helpStyle = lipgloss.NewStyle().
 
 var actionStyle = lipgloss.NewStyle().
 	Foreground(colorAccent)
+
+// Help screen styles
+var helpSectionStyle = lipgloss.NewStyle().
+	Bold(true).
+	Foreground(lipgloss.Color("#58a6ff")).
+	Underline(true)
+
+var helpKeyStyle = lipgloss.NewStyle().
+	Bold(true).
+	Foreground(lipgloss.Color("#3fb950"))
