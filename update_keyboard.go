@@ -45,32 +45,35 @@ func (m model) handleMainKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	// Tab switching
 	case "tab":
-		m.activeView = (m.activeView + 1) % 5
+		newView := (m.activeView + 1) % 5
+		m.switchToView(newView)
 		return m, nil
 
 	case "shift+tab":
+		var newView ViewType
 		if m.activeView == 0 {
-			m.activeView = 4
+			newView = 4
 		} else {
-			m.activeView--
+			newView = m.activeView - 1
 		}
+		m.switchToView(newView)
 		return m, nil
 
 	// Direct tab access
 	case "1":
-		m.activeView = ViewPullRequests
+		m.switchToView(ViewPullRequests)
 		return m, nil
 	case "2":
-		m.activeView = ViewIssues
+		m.switchToView(ViewIssues)
 		return m, nil
 	case "3":
-		m.activeView = ViewRepositories
+		m.switchToView(ViewRepositories)
 		return m, nil
 	case "4":
-		m.activeView = ViewActions
+		m.switchToView(ViewActions)
 		return m, nil
 	case "5":
-		m.activeView = ViewGists
+		m.switchToView(ViewGists)
 		return m, nil
 
 	// Refresh current view
@@ -184,6 +187,22 @@ func (m model) refresh() (tea.Model, tea.Cmd) {
 	// Refresh the current view
 	m.statusMsg = "Refreshed"
 	return m, nil
+}
+
+// switchToView changes the active view and manages focus
+func (m *model) switchToView(newView ViewType) {
+	// Blur the old view
+	if oldView, ok := m.views[m.activeView]; ok {
+		oldView.Blur()
+	}
+
+	// Update active view
+	m.activeView = newView
+
+	// Focus the new view
+	if view, ok := m.views[m.activeView]; ok {
+		view.Focus()
+	}
 }
 
 // Key bindings definition

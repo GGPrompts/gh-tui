@@ -29,6 +29,11 @@ func initialModel(cfg Config) model {
 	m.views[ViewActions] = NewActionsView()
 	m.views[ViewGists] = NewGistView()
 
+	// Focus the initial view (Pull Requests)
+	if view, ok := m.views[ViewPullRequests]; ok {
+		view.Focus()
+	}
+
 	return m
 }
 
