@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -263,6 +264,84 @@ func openInBrowser(itemType, identifier, repo string) tea.Cmd {
 
 		if err := cmd.Run(); err != nil {
 			return errMsg{err: fmt.Errorf("failed to open in browser: %w", err)}
+		}
+
+		return nil
+	}
+}
+
+// createNewIssue opens the browser to create a new issue
+func createNewIssue() tea.Cmd {
+	return func() tea.Msg {
+		// gh issue create --web opens browser with new issue form
+		cmd := exec.Command("gh", "issue", "create", "--web")
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to create issue: %w", err)}
+		}
+
+		return nil
+	}
+}
+
+// toggleRepoStar stars or unstars a repository
+func toggleRepoStar(repoNameWithOwner string) tea.Cmd {
+	return func() tea.Msg {
+		// First check if already starred
+		checkCmd := exec.Command("gh", "repo", "view", repoNameWithOwner, "--json", "viewerHasStarred", "-q", ".viewerHasStarred")
+		output, err := checkCmd.Output()
+		if err != nil {
+			return errMsg{err: fmt.Errorf("failed to check star status: %w", err)}
+		}
+
+		isStarred := strings.TrimSpace(string(output)) == "true"
+
+		var cmd *exec.Cmd
+		if isStarred {
+			// Unstar
+			cmd = exec.Command("gh", "repo", "unstar", repoNameWithOwner)
+		} else {
+			// Star
+			cmd = exec.Command("gh", "repo", "star", repoNameWithOwner)
+		}
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to toggle star: %w", err)}
+		}
+
+		// Return success message
+		if isStarred {
+			return statusMsg{message: "Repository unstarred"}
+		}
+		return statusMsg{message: "Repository starred ⭐"}
+	}
+}
+
+// cloneRepository clones a repository to the current directory
+func cloneRepository(repoNameWithOwner string) tea.Cmd {
+	return func() tea.Msg {
+		// gh repo clone opens in current directory
+		cmd := exec.Command("gh", "repo", "clone", repoNameWithOwner)
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to clone repository: %w", err)}
+		}
+
+		return statusMsg{message: fmt.Sprintf("Cloned %s successfully", repoNameWithOwner)}
+	}
+}
+
+// viewPRDiff shows the diff for a pull request in the pager
+func viewPRDiff(prNumber string) tea.Cmd {
+	return func() tea.Msg {
+		// gh pr diff shows the diff in the default pager (less, more, etc.)
+		cmd := exec.Command("gh", "pr", "diff", prNumber)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to view diff: %w", err)}
 		}
 
 		return nil

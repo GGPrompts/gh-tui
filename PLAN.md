@@ -46,7 +46,7 @@
 
 **Pull Requests Tab**
 - [x] Open PR in browser (`b` key) ✅ Done
-- [ ] View PR diff (`d` key)
+- [x] View PR diff (`d` key) ✅ Done
 - [ ] Merge PR with confirmation (`m` key)
 - [ ] Checkout PR branch locally (`c` key)
 - [ ] Add comment (`C` key)
@@ -55,7 +55,7 @@
 
 **Issues Tab**
 - [x] Open issue in browser (`b` key) ✅ Done
-- [ ] Create new issue (`n` key)
+- [x] Create new issue (`n` key) ✅ Done
 - [ ] Close/reopen issue (`x`/`r` keys)
 - [ ] Add comment (`C` key)
 - [ ] Edit issue (`e` key)
@@ -64,8 +64,8 @@
 
 **Repositories Tab**
 - [x] Open repo in browser (`b` key) ✅ Done
-- [ ] Clone repository (`c` key)
-- [ ] Star/unstar repo (`s` key)
+- [x] Clone repository (`c` key) ✅ Done
+- [x] Star/unstar repo (`s` key) ✅ Done
 - [ ] Fork repository (`f` key)
 
 **Actions Tab**
@@ -82,9 +82,9 @@
 - [ ] Delete gist with confirmation (`d` key)
 - [ ] Fork gist (`f` key)
 
-**Progress**: 5/29 actions completed (17%)
+**Progress**: 9/29 actions completed (31%)
 
-**Estimated Time**: 1-2 weeks remaining
+**Estimated Time**: 1 week remaining
 
 ---
 

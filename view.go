@@ -306,14 +306,14 @@ func (m model) renderHelpScreen() string {
 	// Pull Requests Tab
 	sections = append(sections, helpSectionStyle.Render("Pull Requests Tab"))
 	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open PR in browser")
-	sections = append(sections, helpKeyStyle.Render("  d        ")+"  View diff (coming soon)")
+	sections = append(sections, helpKeyStyle.Render("  d        ")+"  View diff in pager")
 	sections = append(sections, helpKeyStyle.Render("  m        ")+"  Merge PR (coming soon)")
 	sections = append(sections, "")
 
 	// Issues Tab
 	sections = append(sections, helpSectionStyle.Render("Issues Tab"))
 	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open issue in browser")
-	sections = append(sections, helpKeyStyle.Render("  n        ")+"  Create new issue (coming soon)")
+	sections = append(sections, helpKeyStyle.Render("  n        ")+"  Create new issue")
 	sections = append(sections, helpKeyStyle.Render("  e        ")+"  Edit issue (coming soon)")
 	sections = append(sections, "")
 
@@ -321,8 +321,8 @@ func (m model) renderHelpScreen() string {
 	sections = append(sections, helpSectionStyle.Render("Repositories Tab"))
 	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open repo in browser")
 	sections = append(sections, helpKeyStyle.Render("  v        ")+"  Toggle list/table view")
-	sections = append(sections, helpKeyStyle.Render("  c        ")+"  Clone repository (coming soon)")
-	sections = append(sections, helpKeyStyle.Render("  s        ")+"  Star/unstar repo (coming soon)")
+	sections = append(sections, helpKeyStyle.Render("  s        ")+"  Star/unstar repository")
+	sections = append(sections, helpKeyStyle.Render("  c        ")+"  Clone repository")
 	sections = append(sections, "")
 
 	// Actions Tab

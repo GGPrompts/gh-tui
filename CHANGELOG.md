@@ -11,10 +11,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎉 Recent Updates
 
-**Interactive Actions - Phase 1 Progress** - Adding user actions across all views
+**Interactive Actions - Phase 1 Progress: 31% Complete** - Major productivity features added!
 **Help System Complete** - Comprehensive keyboard shortcut reference
 
 ### ✨ Added
+
+#### More Interactive Actions (Phase 1 Continued)
+- **Create New Issue** (`n` key in Issues tab)
+  - Opens browser with GitHub's new issue form
+  - Uses `gh issue create --web`
+  - Quick access to report bugs or request features
+
+- **Star/Unstar Repository** (`s` key in Repositories tab)
+  - Toggle star status with one key
+  - Smart detection: checks current star status first
+  - Visual feedback with star emoji ⭐
+  - Uses `gh repo star/unstar`
+
+- **Clone Repository** (`c` key in Repositories tab)
+  - Clone any repository to current directory
+  - Uses `gh repo clone`
+  - Status message confirms successful clone
+
+- **View PR Diff** (`d` key in Pull Requests tab)
+  - View full PR diff in your default pager (less, more, etc.)
+  - Syntax highlighting if pager supports it
+  - Interactive navigation through changes
+  - Uses `gh pr diff`
+
+- **Updated Help Text** - All affected views now show new key bindings
 
 #### Help Screen (`?` key)
 - **Interactive Help Overlay** - Press `?` to toggle comprehensive help screen

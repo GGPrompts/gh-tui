@@ -82,6 +82,18 @@ func (v *RepositoryView) Update(msg tea.Msg) (View, tea.Cmd) {
 				repo := v.data[v.cursor]
 				return v, openInBrowser("repo", repo.NameWithOwner, "")
 			}
+		case "s":
+			// Star/unstar repository
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				repo := v.data[v.cursor]
+				return v, toggleRepoStar(repo.NameWithOwner)
+			}
+		case "c":
+			// Clone repository
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				repo := v.data[v.cursor]
+				return v, cloneRepository(repo.NameWithOwner)
+			}
 		case "v":
 			// Toggle view mode between list and table
 			if v.viewMode == ViewModeList {
@@ -276,7 +288,7 @@ func (v *RepositoryView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • v: Toggle View • r: Refresh • q: Quit"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • s: Star • c: Clone • v: View • r: Refresh"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().

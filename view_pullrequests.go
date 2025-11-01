@@ -67,6 +67,12 @@ func (v *PullRequestView) Update(msg tea.Msg) (View, tea.Cmd) {
 				pr := v.data[v.cursor]
 				return v, openInBrowser("pr", fmt.Sprintf("%d", pr.Number), "")
 			}
+		case "d":
+			// View PR diff
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				pr := v.data[v.cursor]
+				return v, viewPRDiff(fmt.Sprintf("%d", pr.Number))
+			}
 		}
 
 	case tea.MouseMsg:
@@ -227,7 +233,7 @@ func (v *PullRequestView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • r: Refresh • q: Quit"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • d: Diff • r: Refresh • q: Quit"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().

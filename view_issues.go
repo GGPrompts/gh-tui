@@ -67,6 +67,9 @@ func (v *IssueView) Update(msg tea.Msg) (View, tea.Cmd) {
 				issue := v.data[v.cursor]
 				return v, openInBrowser("issue", fmt.Sprintf("%d", issue.Number), "")
 			}
+		case "n":
+			// Create new issue
+			return v, createNewIssue()
 		}
 
 	case tea.MouseMsg:
@@ -235,7 +238,7 @@ func (v *IssueView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • r: Refresh • q: Quit"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • n: New Issue • r: Refresh • q: Quit"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().
