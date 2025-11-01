@@ -178,13 +178,19 @@ func fetchGists() tea.Cmd {
 
 		// Parse the API response which has different field names
 		var apiGists []struct {
-			ID          string                       `json:"id"`
-			Description string                       `json:"description"`
-			Public      bool                         `json:"public"`
-			Files       map[string]map[string]string `json:"files"`
-			CreatedAt   string                       `json:"created_at"`
-			UpdatedAt   string                       `json:"updated_at"`
-			HTMLURL     string                       `json:"html_url"`
+			ID          string `json:"id"`
+			Description string `json:"description"`
+			Public      bool   `json:"public"`
+			Files       map[string]struct {
+				Filename string `json:"filename"`
+				Type     string `json:"type"`
+				Language string `json:"language"`
+				RawURL   string `json:"raw_url"`
+				Size     int    `json:"size"`
+			} `json:"files"`
+			CreatedAt string `json:"created_at"`
+			UpdatedAt string `json:"updated_at"`
+			HTMLURL   string `json:"html_url"`
 		}
 
 		if err := json.Unmarshal(output, &apiGists); err != nil {
