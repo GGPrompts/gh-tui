@@ -61,6 +61,12 @@ func (v *IssueView) Update(msg tea.Msg) (View, tea.Cmd) {
 			v.loading = true
 			v.err = nil
 			return v, fetchIssues("")
+		case "b":
+			// Open issue in browser
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				issue := v.data[v.cursor]
+				return v, openInBrowser("issue", fmt.Sprintf("%d", issue.Number), "")
+			}
 		}
 
 	case tea.MouseMsg:
@@ -229,7 +235,7 @@ func (v *IssueView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • r: Refresh • q: Quit"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • r: Refresh • q: Quit"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().

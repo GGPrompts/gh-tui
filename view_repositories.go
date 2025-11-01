@@ -76,6 +76,12 @@ func (v *RepositoryView) Update(msg tea.Msg) (View, tea.Cmd) {
 			v.loading = true
 			v.err = nil
 			return v, fetchRepositories("")
+		case "b":
+			// Open repo in browser
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				repo := v.data[v.cursor]
+				return v, openInBrowser("repo", repo.NameWithOwner, "")
+			}
 		case "v":
 			// Toggle view mode between list and table
 			if v.viewMode == ViewModeList {
@@ -270,7 +276,7 @@ func (v *RepositoryView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • r: Refresh • q: Quit"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • v: Toggle View • r: Refresh • q: Quit"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().

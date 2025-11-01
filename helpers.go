@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os/exec"
 	"strings"
 	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 // helpers.go - Utility Functions
@@ -212,3 +215,57 @@ func wrapText(text string, width int) []string {
 
 	return lines
 }
+
+// openInBrowser opens a GitHub item in the default browser using gh CLI
+// itemType: "pr", "issue", "repo", "run", "gist"
+// identifier: PR number, issue number, repo name, run ID, or gist ID
+// repo: repository path (e.g., "owner/repo") - optional for some types
+func openInBrowser(itemType, identifier, repo string) tea.Cmd {
+	return func() tea.Msg {
+		var cmd *exec.Cmd
+
+		switch itemType {
+		case "pr":
+			// gh pr view <number> --web [--repo <repo>]
+			if repo != "" {
+				cmd = exec.Command("gh", "pr", "view", identifier, "--web", "--repo", repo)
+			} else {
+				cmd = exec.Command("gh", "pr", "view", identifier, "--web")
+			}
+
+		case "issue":
+			// gh issue view <number> --web [--repo <repo>]
+			if repo != "" {
+				cmd = exec.Command("gh", "issue", "view", identifier, "--web", "--repo", repo)
+			} else {
+				cmd = exec.Command("gh", "issue", "view", identifier, "--web")
+			}
+
+		case "repo":
+			// gh repo view <repo> --web
+			cmd = exec.Command("gh", "repo", "view", identifier, "--web")
+
+		case "run":
+			// gh run view <id> --web [--repo <repo>]
+			if repo != "" {
+				cmd = exec.Command("gh", "run", "view", identifier, "--web", "--repo", repo)
+			} else {
+				cmd = exec.Command("gh", "run", "view", identifier, "--web")
+			}
+
+		case "gist":
+			// gh gist view <id> --web
+			cmd = exec.Command("gh", "gist", "view", identifier, "--web")
+
+		default:
+			return errMsg{err: fmt.Errorf("unknown item type: %s", itemType)}
+		}
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to open in browser: %w", err)}
+		}
+
+		return nil
+	}
+}
+

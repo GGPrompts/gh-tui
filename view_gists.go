@@ -90,6 +90,12 @@ func (v *GistView) Update(msg tea.Msg) (View, tea.Cmd) {
 			v.loading = true
 			v.err = nil
 			return v, fetchGists()
+		case "b":
+			// Open gist in browser
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				gist := v.data[v.cursor]
+				return v, openInBrowser("gist", gist.ID, "")
+			}
 		case "o":
 			// Open/view gist in read-only mode
 			if len(v.data) > 0 && v.cursor < len(v.data) {
@@ -314,7 +320,7 @@ func (v *GistView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • o: View • e: Edit • n: New"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • o: View • e: Edit • n: New • b: Browser"))
 	lines = append(lines, helpStyle.Render("r: Refresh • q: Quit"))
 
 	content := strings.Join(lines, "\n")
