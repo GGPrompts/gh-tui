@@ -38,7 +38,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.statusMsg = msg.message
 		return m, nil
 
-	// GitHub data loaded messages
+	// GitHub data loaded messages - forward to views
 	case prLoadedMsg:
 		m.loading = false
 		m.lastSync = time.Now()
@@ -48,6 +48,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.pullRequests = msg.prs
 			m.statusMsg = fmt.Sprintf("Loaded %d pull requests", len(msg.prs))
+		}
+		// Forward to PR view
+		if view, ok := m.views[ViewPullRequests]; ok {
+			updatedView, _ := view.Update(msg)
+			m.views[ViewPullRequests] = updatedView
 		}
 		return m, nil
 
@@ -61,6 +66,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.issues = msg.issues
 			m.statusMsg = fmt.Sprintf("Loaded %d issues", len(msg.issues))
 		}
+		// Forward to Issues view
+		if view, ok := m.views[ViewIssues]; ok {
+			updatedView, _ := view.Update(msg)
+			m.views[ViewIssues] = updatedView
+		}
 		return m, nil
 
 	case reposLoadedMsg:
@@ -72,6 +82,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.repositories = msg.repos
 			m.statusMsg = fmt.Sprintf("Loaded %d repositories", len(msg.repos))
+		}
+		// Forward to Repositories view
+		if view, ok := m.views[ViewRepositories]; ok {
+			updatedView, _ := view.Update(msg)
+			m.views[ViewRepositories] = updatedView
 		}
 		return m, nil
 
@@ -85,6 +100,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.workflowRuns = msg.runs
 			m.statusMsg = fmt.Sprintf("Loaded %d workflow runs", len(msg.runs))
 		}
+		// Forward to Actions view
+		if view, ok := m.views[ViewActions]; ok {
+			updatedView, _ := view.Update(msg)
+			m.views[ViewActions] = updatedView
+		}
 		return m, nil
 
 	case gistsLoadedMsg:
@@ -96,6 +116,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.gists = msg.gists
 			m.statusMsg = fmt.Sprintf("Loaded %d gists", len(msg.gists))
+		}
+		// Forward to Gists view
+		if view, ok := m.views[ViewGists]; ok {
+			updatedView, _ := view.Update(msg)
+			m.views[ViewGists] = updatedView
 		}
 		return m, nil
 	}
