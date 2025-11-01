@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -147,7 +148,7 @@ func fetchWorkflowRuns(repo string) tea.Cmd {
 
 		cmd := exec.Command("gh", "run", "list",
 			"--repo", repo,
-			"--json", "databaseId,name,status,conclusion,headBranch,headSha,runNumber,createdAt,url",
+			"--json", "databaseId,name,status,conclusion,headBranch,headSha,number,createdAt,url",
 			"--limit", "50")
 
 		output, err := cmd.Output()
@@ -164,21 +165,54 @@ func fetchWorkflowRuns(repo string) tea.Cmd {
 	}
 }
 
-// fetchGists retrieves gists using gh CLI
+// fetchGists retrieves gists using gh CLI API
 func fetchGists() tea.Cmd {
 	return func() tea.Msg {
-		cmd := exec.Command("gh", "gist", "list",
-			"--json", "id,description,public,files,createdAt,updatedAt,url",
-			"--limit", "50")
+		// gh gist list doesn't support --json, so we use the API directly
+		cmd := exec.Command("gh", "api", "/gists", "--paginate", "-q", ".[0:50]")
 
 		output, err := cmd.Output()
 		if err != nil {
-			return gistsLoadedMsg{err: fmt.Errorf("gh gist list failed: %w", err)}
+			return gistsLoadedMsg{err: fmt.Errorf("gh api /gists failed: %w", err)}
 		}
 
-		var gists []Gist
-		if err := json.Unmarshal(output, &gists); err != nil {
+		// Parse the API response which has different field names
+		var apiGists []struct {
+			ID          string                       `json:"id"`
+			Description string                       `json:"description"`
+			Public      bool                         `json:"public"`
+			Files       map[string]map[string]string `json:"files"`
+			CreatedAt   string                       `json:"created_at"`
+			UpdatedAt   string                       `json:"updated_at"`
+			HTMLURL     string                       `json:"html_url"`
+		}
+
+		if err := json.Unmarshal(output, &apiGists); err != nil {
 			return gistsLoadedMsg{err: fmt.Errorf("parse error: %w", err)}
+		}
+
+		// Transform to our Gist structure
+		gists := make([]Gist, len(apiGists))
+		for i, apiGist := range apiGists {
+			// Convert files map to array
+			files := make([]GistFile, 0, len(apiGist.Files))
+			for filename := range apiGist.Files {
+				files = append(files, GistFile{Filename: filename})
+			}
+
+			// Parse timestamps
+			createdAt, _ := time.Parse(time.RFC3339, apiGist.CreatedAt)
+			updatedAt, _ := time.Parse(time.RFC3339, apiGist.UpdatedAt)
+
+			gists[i] = Gist{
+				ID:          apiGist.ID,
+				Description: apiGist.Description,
+				Public:      apiGist.Public,
+				Files:       files,
+				CreatedAt:   createdAt,
+				UpdatedAt:   updatedAt,
+				URL:         apiGist.HTMLURL,
+			}
 		}
 
 		return gistsLoadedMsg{gists: gists}

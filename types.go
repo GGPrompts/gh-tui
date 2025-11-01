@@ -190,7 +190,7 @@ type WorkflowRun struct {
 	Conclusion string    `json:"conclusion"`
 	HeadBranch string    `json:"headBranch"`
 	HeadSha    string    `json:"headSha"`
-	RunNumber  int       `json:"runNumber"`
+	RunNumber  int       `json:"number"`
 	CreatedAt  time.Time `json:"createdAt"`
 	URL        string    `json:"url"`
 }
