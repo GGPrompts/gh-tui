@@ -190,7 +190,6 @@ func (v *RepositoryView) renderDetail(width, height int) string {
 	// Stats
 	lines = append(lines, fmt.Sprintf("⭐ Stars:      %s", formatNumber(repo.StargazerCount)))
 	lines = append(lines, fmt.Sprintf("🍴 Forks:      %s", formatNumber(repo.ForkCount)))
-	lines = append(lines, fmt.Sprintf("📝 Issues:     %d", repo.OpenIssuesCount))
 	lines = append(lines, fmt.Sprintf("🔤 Language:   %s", formatLanguage(repo.PrimaryLanguage)))
 	lines = append(lines, fmt.Sprintf("🔓 Visibility: %s", formatVisibility(repo.Visibility)))
 

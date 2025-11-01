@@ -110,7 +110,7 @@ func fetchRepositories(owner string) tea.Cmd {
 		}
 
 		cmd := exec.Command("gh", "repo", "list", owner,
-			"--json", "name,nameWithOwner,description,stargazerCount,forkCount,openIssuesCount,primaryLanguage,visibility,url",
+			"--json", "name,nameWithOwner,description,stargazerCount,forkCount,primaryLanguage,visibility,url",
 			"--limit", "100")
 
 		output, err := cmd.Output()
