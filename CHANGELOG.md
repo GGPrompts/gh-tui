@@ -11,12 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎉 Recent Updates
 
-**Interactive Actions - Phase 1 Progress: 31% Complete** - Major productivity features added!
+**Interactive Actions - Phase 1 Progress: 40% Complete** - Major productivity features added!
 **Help System Complete** - Comprehensive keyboard shortcut reference
 
 ### ✨ Added
 
 #### More Interactive Actions (Phase 1 Continued)
+- **View Workflow Logs** (`l` key in Actions tab)
+  - View complete workflow run logs in your default pager
+  - Interactive navigation through log output
+  - Uses `gh run view <run-id> --log`
+  - Perfect for debugging failed workflows
+
 - **Create New Issue** (`n` key in Issues tab)
   - Opens browser with GitHub's new issue form
   - Uses `gh issue create --web`
@@ -32,6 +38,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Clone any repository to current directory
   - Uses `gh repo clone`
   - Status message confirms successful clone
+
+- **Fork Repository** (`f` key in Repositories tab)
+  - Fork any repository to your account with one key
+  - Uses `gh repo fork --remote=false`
+  - Creates fork without adding remote (clean and simple)
+  - Status message confirms successful fork with fork emoji 🍴
+
+- **Close/Reopen Issue** (`x`/`r` keys in Issues tab)
+  - Close open issues with `x` key
+  - Reopen closed issues with `r` key
+  - Smart `r` key: reopens if closed, refreshes if open
+  - Perfect for issue triage and management
+  - Uses `gh issue close/reopen <number>`
+  - Status messages confirm actions
 
 - **View PR Diff** (`d` key in Pull Requests tab)
   - View full PR diff in your default pager (less, more, etc.)

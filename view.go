@@ -314,6 +314,8 @@ func (m model) renderHelpScreen() string {
 	sections = append(sections, helpSectionStyle.Render("Issues Tab"))
 	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open issue in browser")
 	sections = append(sections, helpKeyStyle.Render("  n        ")+"  Create new issue")
+	sections = append(sections, helpKeyStyle.Render("  x        ")+"  Close issue")
+	sections = append(sections, helpKeyStyle.Render("  r        ")+"  Reopen issue (or refresh if open)")
 	sections = append(sections, helpKeyStyle.Render("  e        ")+"  Edit issue (coming soon)")
 	sections = append(sections, "")
 
@@ -323,12 +325,13 @@ func (m model) renderHelpScreen() string {
 	sections = append(sections, helpKeyStyle.Render("  v        ")+"  Toggle list/table view")
 	sections = append(sections, helpKeyStyle.Render("  s        ")+"  Star/unstar repository")
 	sections = append(sections, helpKeyStyle.Render("  c        ")+"  Clone repository")
+	sections = append(sections, helpKeyStyle.Render("  f        ")+"  Fork repository")
 	sections = append(sections, "")
 
 	// Actions Tab
 	sections = append(sections, helpSectionStyle.Render("Actions Tab"))
 	sections = append(sections, helpKeyStyle.Render("  b        ")+"  Open workflow run in browser")
-	sections = append(sections, helpKeyStyle.Render("  l        ")+"  View logs (coming soon)")
+	sections = append(sections, helpKeyStyle.Render("  l        ")+"  View logs")
 	sections = append(sections, helpKeyStyle.Render("  r        ")+"  Re-run workflow (coming soon)")
 	sections = append(sections, "")
 

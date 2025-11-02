@@ -67,6 +67,12 @@ func (v *ActionsView) Update(msg tea.Msg) (View, tea.Cmd) {
 				run := v.data[v.cursor]
 				return v, openInBrowser("run", fmt.Sprintf("%d", run.DatabaseId), "")
 			}
+		case "l":
+			// View workflow logs in pager
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				run := v.data[v.cursor]
+				return v, viewWorkflowLogs(fmt.Sprintf("%d", run.DatabaseId))
+			}
 		}
 
 	case tea.MouseMsg:
@@ -221,7 +227,7 @@ func (v *ActionsView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • r: Refresh • q: Quit"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • l: Logs • b: Browser • r: Refresh • q: Quit"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().

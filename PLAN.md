@@ -56,7 +56,7 @@
 **Issues Tab**
 - [x] Open issue in browser (`b` key) ✅ Done
 - [x] Create new issue (`n` key) ✅ Done
-- [ ] Close/reopen issue (`x`/`r` keys)
+- [x] Close/reopen issue (`x`/`r` keys) ✅ Done
 - [ ] Add comment (`C` key)
 - [ ] Edit issue (`e` key)
 - [ ] Add/remove labels (`l` key)
@@ -66,11 +66,16 @@
 - [x] Open repo in browser (`b` key) ✅ Done
 - [x] Clone repository (`c` key) ✅ Done
 - [x] Star/unstar repo (`s` key) ✅ Done
-- [ ] Fork repository (`f` key)
+- [x] Fork repository (`f` key) ✅ Done
+- [ ] Toggle starred repos filter (`*` or `shift+s` key)
+  - Switch between "My Repos" and "Starred Repos" view
+  - Fetch starred repos with `gh api user/starred`
+  - Enables workflow: browse GitHub → star repos → view in TUI → fork/clone
+  - Status indicator in title ("Repositories (N)" vs "Starred Repositories (N)")
 
 **Actions Tab**
 - [x] Open workflow in browser (`b` key) ✅ Done
-- [ ] View logs (`l` key)
+- [x] View logs (`l` key) ✅ Done
 - [ ] Re-run workflow (`r` key)
 - [ ] Cancel running workflow (`c` key)
 
@@ -82,7 +87,7 @@
 - [ ] Delete gist with confirmation (`d` key)
 - [ ] Fork gist (`f` key)
 
-**Progress**: 9/29 actions completed (31%)
+**Progress**: 12/30 actions completed (40%)
 
 **Estimated Time**: 1 week remaining
 
@@ -188,6 +193,7 @@ Based on INTEGRATION_PLAN.md:
 **Search & Filter**
 - [ ] Global search (`/` key)
 - [ ] Per-view filtering
+- [ ] Starred repos filter for Repositories tab (`*` key) - See Phase 1
 - [ ] Sort options menu (`S` key)
 - [ ] Filter by status, author, labels, etc.
 

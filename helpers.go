@@ -348,3 +348,62 @@ func viewPRDiff(prNumber string) tea.Cmd {
 	}
 }
 
+// forkRepository forks a repository to the authenticated user's account
+func forkRepository(repoNameWithOwner string) tea.Cmd {
+	return func() tea.Msg {
+		// gh repo fork creates a fork in the authenticated user's account
+		cmd := exec.Command("gh", "repo", "fork", repoNameWithOwner, "--remote=false")
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to fork repository: %w", err)}
+		}
+
+		return statusMsg{message: fmt.Sprintf("Forked %s successfully 🍴", repoNameWithOwner)}
+	}
+}
+
+// closeIssue closes an issue
+func closeIssue(issueNumber int) tea.Cmd {
+	return func() tea.Msg {
+		// gh issue close <number> closes the issue
+		cmd := exec.Command("gh", "issue", "close", fmt.Sprintf("%d", issueNumber))
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to close issue: %w", err)}
+		}
+
+		return statusMsg{message: fmt.Sprintf("Issue #%d closed", issueNumber)}
+	}
+}
+
+// reopenIssue reopens a closed issue
+func reopenIssue(issueNumber int) tea.Cmd {
+	return func() tea.Msg {
+		// gh issue reopen <number> reopens the issue
+		cmd := exec.Command("gh", "issue", "reopen", fmt.Sprintf("%d", issueNumber))
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to reopen issue: %w", err)}
+		}
+
+		return statusMsg{message: fmt.Sprintf("Issue #%d reopened", issueNumber)}
+	}
+}
+
+// viewWorkflowLogs shows the logs for a workflow run in the pager
+func viewWorkflowLogs(runId string) tea.Cmd {
+	return func() tea.Msg {
+		// gh run view shows the logs in the default pager (less, more, etc.)
+		cmd := exec.Command("gh", "run", "view", runId, "--log")
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		if err := cmd.Run(); err != nil {
+			return errMsg{err: fmt.Errorf("failed to view logs: %w", err)}
+		}
+
+		return nil
+	}
+}
+
