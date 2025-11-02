@@ -58,9 +58,26 @@ func (v *IssueView) Update(msg tea.Msg) (View, tea.Cmd) {
 				v.cursor++
 			}
 		case "r":
+			// Smart 'r' key: reopen if closed, otherwise refresh
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				issue := v.data[v.cursor]
+				if issue.State == "CLOSED" {
+					// Reopen closed issue
+					return v, reopenIssue(issue.Number)
+				}
+			}
+			// Otherwise refresh the view
 			v.loading = true
 			v.err = nil
 			return v, fetchIssues("")
+		case "x":
+			// Close open issue
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				issue := v.data[v.cursor]
+				if issue.State == "OPEN" {
+					return v, closeIssue(issue.Number)
+				}
+			}
 		case "b":
 			// Open issue in browser
 			if len(v.data) > 0 && v.cursor < len(v.data) {
@@ -238,7 +255,7 @@ func (v *IssueView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • n: New Issue • r: Refresh • q: Quit"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • n: New • x: Close • r: Reopen/Refresh"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().

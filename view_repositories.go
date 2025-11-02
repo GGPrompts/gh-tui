@@ -94,6 +94,12 @@ func (v *RepositoryView) Update(msg tea.Msg) (View, tea.Cmd) {
 				repo := v.data[v.cursor]
 				return v, cloneRepository(repo.NameWithOwner)
 			}
+		case "f":
+			// Fork repository
+			if len(v.data) > 0 && v.cursor < len(v.data) {
+				repo := v.data[v.cursor]
+				return v, forkRepository(repo.NameWithOwner)
+			}
 		case "v":
 			// Toggle view mode between list and table
 			if v.viewMode == ViewModeList {
@@ -288,7 +294,7 @@ func (v *RepositoryView) renderDetail(width, height int) string {
 
 	// Keyboard hints
 	lines = append(lines, "")
-	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • s: Star • c: Clone • v: View • r: Refresh"))
+	lines = append(lines, helpStyle.Render("↑/↓: Navigate • b: Browser • s: Star • c: Clone • f: Fork • v: View • r: Refresh"))
 
 	content := strings.Join(lines, "\n")
 	return lipgloss.NewStyle().
@@ -362,7 +368,7 @@ func (v *RepositoryView) renderTable(width, height int) string {
 
 	// Add keyboard hints
 	lines = append(lines, "")
-	hints := helpStyle.Render("↑/↓: Navigate • v: Toggle View • Click headers to sort • r: Refresh • q: Quit")
+	hints := helpStyle.Render("↑/↓: Navigate • b: Browser • s: Star • c: Clone • f: Fork • v: Toggle View • r: Refresh")
 	lines = append(lines, hints)
 
 	content := strings.Join(lines, "\n")
