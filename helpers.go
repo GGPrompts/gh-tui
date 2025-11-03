@@ -15,6 +15,9 @@ import (
 
 // truncateString truncates text to fit within maxWidth, adding "..." if needed
 func truncateString(s string, maxWidth int) string {
+	if maxWidth <= 0 {
+		return ""
+	}
 	if len(s) <= maxWidth {
 		return s
 	}
